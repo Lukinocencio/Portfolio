@@ -78,7 +78,6 @@ export default function Projects() {
   const { t, language } = useLanguage();
   const { selectedSkill, setSelectedSkill } = useFilter();
   const [allRepos, setAllRepos] = useState([]);
-  const [repos, setRepos] = useState([]);
   const [loading, setLoading] = useState(true);
 
   const scrollRef = useRef(null);
@@ -95,6 +94,18 @@ export default function Projects() {
     return Array.from(tags).sort();
   }, [allRepos]);
 
+  const repos = useMemo(() => {
+    if (!allRepos.length) return [];
+    if (selectedSkill) {
+      return allRepos.filter(repo => {
+        const tags = getRepoTags(repo);
+        return tags.some(tag => tag.toLowerCase() === selectedSkill.toLowerCase());
+      });
+    }
+    const initial = allRepos.slice(0, 6);
+    return [...initial, ...initial, ...initial];
+  }, [selectedSkill, allRepos]);
+
   useEffect(() => {
     fetch("https://api.github.com/users/Lukinocencio/repos?type=public&sort=updated&per_page=30")
       .then((res) => res.json())
@@ -102,8 +113,6 @@ export default function Projects() {
         if (Array.isArray(data)) {
           const filteredRepos = data.filter(repo => repo.name !== "Lukinocencio");
           setAllRepos(filteredRepos);
-          const initial = filteredRepos.slice(0, 6);
-          setRepos([...initial, ...initial, ...initial]);
         }
         setLoading(false);
       })
@@ -114,28 +123,18 @@ export default function Projects() {
   }, []);
 
   useEffect(() => {
-    if (!allRepos.length) return;
+    if (!allRepos.length || !scrollRef.current) return;
     
     if (selectedSkill) {
-      const filtered = allRepos.filter(repo => {
-        const tags = getRepoTags(repo);
-        return tags.some(tag => tag.toLowerCase() === selectedSkill.toLowerCase());
-      });
-      // Se houver selectedSkill, nao duplicamos. Mostramos apenas os resultados.
-      setRepos(filtered);
-      // Reseta o scroll para o comeco
-      if (scrollRef.current) scrollRef.current.scrollLeft = 0;
+      scrollRef.current.scrollLeft = 0;
     } else {
-      const initial = allRepos.slice(0, 6);
-      setRepos([...initial, ...initial, ...initial]);
-      // Reposiciona o scroll no meio para o loop funcionar
-      if (scrollRef.current) {
-        setTimeout(() => {
-           if (scrollRef.current) scrollRef.current.scrollLeft = scrollRef.current.scrollWidth / 3;
-        }, 100);
-      }
+      setTimeout(() => {
+        if (scrollRef.current) {
+          scrollRef.current.scrollLeft = scrollRef.current.scrollWidth / 3;
+        }
+      }, 100);
     }
-  }, [selectedSkill, allRepos]);
+  }, [selectedSkill, allRepos.length]);
 
   useEffect(() => {
     if (loading || !scrollRef.current) return;

@@ -1,25 +1,22 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useLanguage } from "@/context/LanguageContext";
 import SpotifyPlaying from "./SpotifyPlaying";
 
+const calculateAge = () => {
+  const birthDate = new Date(2003, 8, 13);
+  const today = new Date();
+  let currentAge = today.getFullYear() - birthDate.getFullYear();
+  const m = today.getMonth() - birthDate.getMonth();
+  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+    currentAge--;
+  }
+  return currentAge;
+};
+
 export default function About() {
   const { t } = useLanguage();
-  const [age, setAge] = useState(22);
-
-  useEffect(() => {
-    const calculateAge = () => {
-      const birthDate = new Date(2003, 8, 13);
-      const today = new Date();
-      let currentAge = today.getFullYear() - birthDate.getFullYear();
-      const m = today.getMonth() - birthDate.getMonth();
-      if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-        currentAge--;
-      }
-      return currentAge;
-    };
-    setAge(calculateAge());
-  }, []);
+  const [age] = useState(calculateAge);
 
   return (
     <section id="about" className="about max-width">

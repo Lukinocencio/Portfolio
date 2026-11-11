@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { useLanguage } from "@/context/LanguageContext";
 import { useTheme } from "@/context/ThemeContext";
 
@@ -32,9 +33,9 @@ export default function Navbar() {
         
         {/* LOGO */}
         <div style={{ flex: '0 0 auto' }}>
-          <a href="/">
+          <Link href="/">
             <img src="/img/lfrancalogo.png" width="55" height="55" alt="Lucas França" />
-          </a>
+          </Link>
         </div>
 
         {/* LINKS (CENTERED) */}
