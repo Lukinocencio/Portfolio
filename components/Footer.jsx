@@ -4,15 +4,11 @@ import { useLanguage } from "@/context/LanguageContext";
 
 export default function Footer() {
   const { t } = useLanguage();
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year] = useState(() => new Date().getFullYear());
   const [copied, setCopied] = useState(false);
   const [formData, setFormData] = useState({ name: "", email: "", tel: "", subject: "", message: "", _honeypot: "" });
   const [isSending, setIsSending] = useState(false);
   const [submitStatus, setSubmitStatus] = useState("");
-
-  useEffect(() => {
-    setYear(new Date().getFullYear());
-  }, []);
 
   const contactEmail = process.env.NEXT_PUBLIC_CONTACT_EMAIL || "lucasifranca@outlook.com";
 
